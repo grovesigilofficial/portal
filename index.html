@@ -1,6 +1,6 @@
 <body>
-  <h1>Welcome to GroveSigilOfficial</h1>
-  
+  <h1>Welcome</h1>
+
   <div>
     <button id="signUpBtn">Sign Up</button>
     <button id="signInBtn">Sign In</button>
@@ -11,6 +11,12 @@
   <div id="postSection" style="display:none;">
     <h2>Create a Post</h2>
     <textarea id="postContent" placeholder="Write something..."></textarea><br>
+
+    <label>
+      <input type="checkbox" id="velmaraCheck">
+      Velmara (restricted)
+    </label><br>
+
     <button id="postBtn">Post</button>
 
     <h2>Feed</h2>
@@ -21,24 +27,28 @@
     import { supabase } from "./supabase.js";
 
     let currentUser = null;
+    let currentUserRole = 'guest';
 
-    // Show feed if logged in
     async function loadFeed() {
+      // Fetch all posts the user can see
       const { data: posts, error } = await supabase
         .from('posts')
-        .select('id, content, created_at, user_id')
+        .select('id, content, created_at, user_id, access_level')
         .order('created_at', { ascending: false });
       
       const feedEl = document.getElementById('feed');
       feedEl.innerHTML = '';
+
       posts.forEach(post => {
+        // Only show Velmara posts to members/admins
+        if (post.access_level === 'velmara' && !['member','admin'].includes(currentUserRole)) return;
+
         const li = document.createElement('li');
         li.textContent = post.content + ' (' + post.created_at + ')';
         feedEl.appendChild(li);
       });
     }
 
-    // Sign-up
     const signUpBtn = document.getElementById("signUpBtn");
     signUpBtn.onclick = async () => {
       const email = prompt("Email:");
@@ -46,11 +56,11 @@
       if (!email || !password) return alert("Required");
 
       const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) { alert(error.message); return; }
+      if (error) return alert(error.message);
+
       alert("Sign-up successful!");
     };
 
-    // Sign-in
     const signInBtn = document.getElementById("signInBtn");
     signInBtn.onclick = async () => {
       const email = prompt("Email:");
@@ -58,26 +68,37 @@
       if (!email || !password) return alert("Required");
 
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) { alert(error.message); return; }
+      if (error) return alert(error.message);
 
       currentUser = data.user;
+
+      // Fetch user role
+      const { data: userData } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', currentUser.id)
+        .single();
+
+      currentUserRole = userData?.role || 'guest';
       document.getElementById('postSection').style.display = 'block';
       loadFeed();
     };
 
-    // Create post
     const postBtn = document.getElementById("postBtn");
     postBtn.onclick = async () => {
       const content = document.getElementById("postContent").value;
       if (!content) return alert("Cannot post empty content");
 
+      const access_level = document.getElementById("velmaraCheck").checked ? 'velmara' : 'public';
+
       const { data, error } = await supabase.from('posts').insert([
-        { content: content, user_id: currentUser.id }
+        { content, user_id: currentUser.id, access_level }
       ]);
 
-      if (error) { alert(error.message); return; }
+      if (error) return alert(error.message);
 
       document.getElementById("postContent").value = '';
+      document.getElementById("velmaraCheck").checked = false;
       loadFeed();
     };
   </script>
