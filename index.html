@@ -1,36 +1,68 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>My Website</title>
-  </head>
-  <body>
-    <h1>Welcome</h1>
-    <button id="signUpBtn">Sign Up</button>
-    <button id="signInBtn">Sign In</button>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GroveSigilOfficial</title>
+</head>
+<body>
+  <h1>Welcome to GroveSigilOfficial</h1>
+  
+  <button id="signUpBtn">Sign Up</button>
+  <button id="signInBtn">Sign In</button>
 
-    <script type="module">
-      import { supabase } from "./supabase.js";
+  <script type="module">
+    import { supabase } from "./supabase.js";
 
-      const signUpBtn = document.getElementById("signUpBtn");
-      const signInBtn = document.getElementById("signInBtn");
+    // Test connection to database
+    async function testConnection() {
+      const { data, error } = await supabase.from('users').select('*');
+      console.log("Database Test Data:", data);
+      console.log("Database Test Error:", error);
+    }
 
-      signUpBtn.onclick = async () => {
-        const { data, error } = await supabase.auth.signUp({
-          email: prompt("Email:"),
-          password: prompt("Password:"),
-        });
-        console.log(data, error);
-      };
+    testConnection();
 
-      signInBtn.onclick = async () => {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: prompt("Email:"),
-          password: prompt("Password:"),
-        });
-        console.log(data, error);
-      };
-    </script>
-  </body>
+    // Sign-up button
+    const signUpBtn = document.getElementById("signUpBtn");
+    signUpBtn.onclick = async () => {
+      const email = prompt("Enter your email:");
+      const password = prompt("Enter your password:");
+      if (!email || !password) return alert("Email and password required");
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        alert("Sign-up error: " + error.message);
+        console.log(error);
+      } else {
+        alert("Sign-up successful! Check your email for confirmation.");
+        console.log(data);
+      }
+    };
+
+    // Sign-in button
+    const signInBtn = document.getElementById("signInBtn");
+    signInBtn.onclick = async () => {
+      const email = prompt("Enter your email:");
+      const password = prompt("Enter your password:");
+      if (!email || !password) return alert("Email and password required");
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        alert("Sign-in error: " + error.message);
+        console.log(error);
+      } else {
+        alert("Sign-in successful!");
+        console.log(data);
+      }
+    };
+  </script>
+</body>
 </html>
-
