@@ -1,68 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>GroveSigilOfficial</title>
-</head>
 <body>
   <h1>Welcome to GroveSigilOfficial</h1>
   
-  <button id="signUpBtn">Sign Up</button>
-  <button id="signInBtn">Sign In</button>
+  <div>
+    <button id="signUpBtn">Sign Up</button>
+    <button id="signInBtn">Sign In</button>
+  </div>
+
+  <hr>
+
+  <div id="postSection" style="display:none;">
+    <h2>Create a Post</h2>
+    <textarea id="postContent" placeholder="Write something..."></textarea><br>
+    <button id="postBtn">Post</button>
+
+    <h2>Feed</h2>
+    <ul id="feed"></ul>
+  </div>
 
   <script type="module">
     import { supabase } from "./supabase.js";
 
-    // Test connection to database
-    async function testConnection() {
-      const { data, error } = await supabase.from('users').select('*');
-      console.log("Database Test Data:", data);
-      console.log("Database Test Error:", error);
+    let currentUser = null;
+
+    // Show feed if logged in
+    async function loadFeed() {
+      const { data: posts, error } = await supabase
+        .from('posts')
+        .select('id, content, created_at, user_id')
+        .order('created_at', { ascending: false });
+      
+      const feedEl = document.getElementById('feed');
+      feedEl.innerHTML = '';
+      posts.forEach(post => {
+        const li = document.createElement('li');
+        li.textContent = post.content + ' (' + post.created_at + ')';
+        feedEl.appendChild(li);
+      });
     }
 
-    testConnection();
-
-    // Sign-up button
+    // Sign-up
     const signUpBtn = document.getElementById("signUpBtn");
     signUpBtn.onclick = async () => {
-      const email = prompt("Enter your email:");
-      const password = prompt("Enter your password:");
-      if (!email || !password) return alert("Email and password required");
+      const email = prompt("Email:");
+      const password = prompt("Password:");
+      if (!email || !password) return alert("Required");
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) {
-        alert("Sign-up error: " + error.message);
-        console.log(error);
-      } else {
-        alert("Sign-up successful! Check your email for confirmation.");
-        console.log(data);
-      }
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) { alert(error.message); return; }
+      alert("Sign-up successful!");
     };
 
-    // Sign-in button
+    // Sign-in
     const signInBtn = document.getElementById("signInBtn");
     signInBtn.onclick = async () => {
-      const email = prompt("Enter your email:");
-      const password = prompt("Enter your password:");
-      if (!email || !password) return alert("Email and password required");
+      const email = prompt("Email:");
+      const password = prompt("Password:");
+      if (!email || !password) return alert("Required");
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) { alert(error.message); return; }
 
-      if (error) {
-        alert("Sign-in error: " + error.message);
-        console.log(error);
-      } else {
-        alert("Sign-in successful!");
-        console.log(data);
-      }
+      currentUser = data.user;
+      document.getElementById('postSection').style.display = 'block';
+      loadFeed();
+    };
+
+    // Create post
+    const postBtn = document.getElementById("postBtn");
+    postBtn.onclick = async () => {
+      const content = document.getElementById("postContent").value;
+      if (!content) return alert("Cannot post empty content");
+
+      const { data, error } = await supabase.from('posts').insert([
+        { content: content, user_id: currentUser.id }
+      ]);
+
+      if (error) { alert(error.message); return; }
+
+      document.getElementById("postContent").value = '';
+      loadFeed();
     };
   </script>
 </body>
-</html>
