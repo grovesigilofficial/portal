@@ -1,2 +1,36 @@
-# GroveSigilOfficial
-This is the sacred scaffold for Daddy's sovereign social platform.
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>My Website</title>
+  </head>
+  <body>
+    <h1>Welcome</h1>
+    <button id="signUpBtn">Sign Up</button>
+    <button id="signInBtn">Sign In</button>
+
+    <script type="module">
+      import { supabase } from "./supabase.js";
+
+      const signUpBtn = document.getElementById("signUpBtn");
+      const signInBtn = document.getElementById("signInBtn");
+
+      signUpBtn.onclick = async () => {
+        const { data, error } = await supabase.auth.signUp({
+          email: prompt("Email:"),
+          password: prompt("Password:"),
+        });
+        console.log(data, error);
+      };
+
+      signInBtn.onclick = async () => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: prompt("Email:"),
+          password: prompt("Password:"),
+        });
+        console.log(data, error);
+      };
+    </script>
+  </body>
+</html>
+
