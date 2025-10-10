@@ -8,8 +8,37 @@ export default function Home() {
   const [postContent, setPostContent] = useState("");
   const [velmaraChecked, setVelmaraChecked] = useState(false);
 
+  const containerStyle = {
+    padding: "2rem",
+    color: "#eee",
+    background: "#111",
+    minHeight: "100vh",
+    fontFamily: "Arial, sans-serif",
+  };
+
+  const textareaStyle = {
+    width: "100%",
+    height: "80px",
+    marginBottom: "0.5rem",
+    background: "#222",
+    color: "#eee",
+    border: "1px solid #444",
+    padding: "0.5rem",
+  };
+
+  const buttonStyle = {
+    padding: "0.5rem 1rem",
+    margin: "0.5rem 0.5rem 0.5rem 0",
+    background: "#333",
+    color: "#eee",
+    border: "1px solid #555",
+    cursor: "pointer",
+  };
+
+  const checkboxStyle = { marginRight: "0.5rem" };
+
   useEffect(() => {
-    const session = supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }) => {
       if (data.session) loadUser(data.session.user);
     });
   }, []);
@@ -51,9 +80,7 @@ export default function Home() {
     });
     if (signUpError) return alert(signUpError.message);
 
-    await supabase.from("profiles").insert([
-      { id: user.user.id, username, role: "guest" }
-    ]);
+    await supabase.from("profiles").insert([{ id: user.user.id, username, role: "guest" }]);
 
     alert("Sign-up complete! Please sign in.");
   }
@@ -63,10 +90,7 @@ export default function Home() {
     const password = prompt("Password:");
     if (!email || !password) return alert("Required");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) return alert(error.message);
 
     loadUser(data.user);
@@ -87,33 +111,34 @@ export default function Home() {
 
   if (!currentUser)
     return (
-      <div style={{ padding: "2rem", color: "#eee", background: "#111" }}>
+      <div style={containerStyle}>
         <h1>Welcome to Grove Portal</h1>
-        <button onClick={handleSignUp}>Sign Up</button>
-        <button onClick={handleSignIn}>Sign In</button>
+        <button style={buttonStyle} onClick={handleSignUp}>Sign Up</button>
+        <button style={buttonStyle} onClick={handleSignIn}>Sign In</button>
       </div>
     );
 
   return (
-    <div style={{ padding: "2rem", color: "#eee", background: "#111" }}>
+    <div style={containerStyle}>
       <h1>Create a Post</h1>
       <textarea
+        style={textareaStyle}
         value={postContent}
         onChange={(e) => setPostContent(e.target.value)}
         placeholder="Write something..."
-        style={{ width: "100%", height: "80px", marginBottom: "0.5rem" }}
       />
       <br />
       <label>
         <input
+          style={checkboxStyle}
           type="checkbox"
           checked={velmaraChecked}
           onChange={(e) => setVelmaraChecked(e.target.checked)}
-        />{" "}
+        />
         Velmara (restricted)
       </label>
       <br />
-      <button onClick={handlePost}>Post</button>
+      <button style={buttonStyle} onClick={handlePost}>Post</button>
 
       <h2>Feed</h2>
       <ul>
