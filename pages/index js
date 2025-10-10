@@ -1,0 +1,128 @@
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabaseClient";
+
+export default function Home() {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserRole, setCurrentUserRole] = useState("guest");
+  const [posts, setPosts] = useState([]);
+  const [postContent, setPostContent] = useState("");
+  const [velmaraChecked, setVelmaraChecked] = useState(false);
+
+  useEffect(() => {
+    const session = supabase.auth.getSession().then(({ data }) => {
+      if (data.session) loadUser(data.session.user);
+    });
+  }, []);
+
+  async function loadUser(user) {
+    setCurrentUser(user);
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    setCurrentUserRole(profile?.role || "guest");
+    loadFeed();
+  }
+
+  async function loadFeed() {
+    const { data } = await supabase
+      .from("posts")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setPosts(
+      data.filter(
+        (p) =>
+          p.access_level !== "velmara" ||
+          ["member", "admin"].includes(currentUserRole)
+      )
+    );
+  }
+
+  async function handleSignUp() {
+    const email = prompt("Email:");
+    const password = prompt("Password:");
+    const username = prompt("Username:");
+    if (!email || !password || !username) return alert("All required");
+
+    const { data: user, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (signUpError) return alert(signUpError.message);
+
+    await supabase.from("profiles").insert([
+      { id: user.user.id, username, role: "guest" }
+    ]);
+
+    alert("Sign-up complete! Please sign in.");
+  }
+
+  async function handleSignIn() {
+    const email = prompt("Email:");
+    const password = prompt("Password:");
+    if (!email || !password) return alert("Required");
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) return alert(error.message);
+
+    loadUser(data.user);
+  }
+
+  async function handlePost() {
+    if (!postContent) return alert("Cannot post empty content");
+    const access_level = velmaraChecked ? "velmara" : "public";
+
+    await supabase.from("posts").insert([
+      { content: postContent, user_id: currentUser.id, access_level },
+    ]);
+
+    setPostContent("");
+    setVelmaraChecked(false);
+    loadFeed();
+  }
+
+  if (!currentUser)
+    return (
+      <div style={{ padding: "2rem", color: "#eee", background: "#111" }}>
+        <h1>Welcome to Grove Portal</h1>
+        <button onClick={handleSignUp}>Sign Up</button>
+        <button onClick={handleSignIn}>Sign In</button>
+      </div>
+    );
+
+  return (
+    <div style={{ padding: "2rem", color: "#eee", background: "#111" }}>
+      <h1>Create a Post</h1>
+      <textarea
+        value={postContent}
+        onChange={(e) => setPostContent(e.target.value)}
+        placeholder="Write something..."
+        style={{ width: "100%", height: "80px", marginBottom: "0.5rem" }}
+      />
+      <br />
+      <label>
+        <input
+          type="checkbox"
+          checked={velmaraChecked}
+          onChange={(e) => setVelmaraChecked(e.target.checked)}
+        />{" "}
+        Velmara (restricted)
+      </label>
+      <br />
+      <button onClick={handlePost}>Post</button>
+
+      <h2>Feed</h2>
+      <ul>
+        {posts.map((p) => (
+          <li key={p.id}>
+            {p.content} ({new Date(p.created_at).toLocaleString()})
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
