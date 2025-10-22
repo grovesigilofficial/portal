@@ -1,8 +1,0 @@
-// pages/index.js
-export default function Home() {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <h1>Hello, Grove is alive!</h1>
-    </div>
-  );
-}
