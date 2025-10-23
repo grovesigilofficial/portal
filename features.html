@@ -3,48 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Features Coming Soon</title>
+  <title>Features / Admin</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <!-- 💥 FAT DADDY NOTE: Features Page - future site features with placeholders -->
+<body class="page">
 
-  <a href="index.html" class="nav-btn">← Back to Portal</a>
+<div class="nav-buttons">
+  <a href="index.html" class="nav-btn">Back to Portal</a>
+</div>
 
-  <h1>✨ Features Coming Soon!</h1>
+<section class="panel">
+  <h1>Features Coming Soon</h1>
+  <p class="intro">Members login, profiles, news feed, admin lights, news tickets, and a suggestions box will be added shortly.</p>
 
-  <!-- 🔒 Members Login Placeholder -->
-  <section id="login">
-    <h2>Members Login</h2>
-    <form>
-      <input type="text" placeholder="Username" disabled>
-      <input type="password" placeholder="Password" disabled>
-      <button disabled>Login</button>
-    </form>
-    <p class="note">Login functionality coming soon.</p>
-  </section>
+  <div id="admin-lights">Admin Active</div>
+  <div id="news-ticker">No new news tickets</div>
 
-  <!-- 👤 Profiles / News Feed Placeholder -->
-  <section id="profiles">
-    <h2>Profiles / News Feed</h2>
-    <p>Member activity and posts will appear here once live.</p>
-  </section>
+  <h2>Suggestions / Ideas</h2>
+  <textarea id="suggestion-box" placeholder="Submit your idea..."></textarea>
+  <button id="submit-suggestion">Submit</button>
 
-  <!-- 💡 Admin Lights & News Ticker -->
-  <section id="admin">
-    <h2>Admin Dashboard</h2>
-    <div id="admin-lights">🟢 All systems nominal</div>
-    <div id="news-ticker">No new announcements</div>
-  </section>
+  <ul id="suggestion-list"></ul>
+</section>
 
-  <!-- 📝 Suggestions Box -->
-  <section id="suggestions">
-    <h2>Suggestions Box</h2>
-    <textarea id="suggestion-input" placeholder="Write suggestions here..."></textarea>
-    <button onclick="saveSuggestion()">Submit (Admin Only)</button>
-    <ul id="suggestion-list"></ul>
-  </section>
+<script>
+const suggestions = [];
+const suggestionBox = document.getElementById('suggestion-box');
+const suggestionList = document.getElementById('suggestion-list');
+document.getElementById('submit-suggestion').addEventListener('click', () => {
+  if(suggestionBox.value.trim() === '') return;
+  suggestions.push(suggestionBox.value);
+  suggestionList.innerHTML = suggestions.map(s => `<li>${s}</li>`).join('');
+  suggestionBox.value = '';
+});
+</script>
 
-  <script src="script.js"></script>
+<footer class="footer">
+  © 2025 — Test Site. Full platform coming soon.
+</footer>
+
 </body>
 </html>
