@@ -1,208 +1,26 @@
-/* ==========================
-   GroveSigilOfficial Shared Styles
-   Covers all pages: portal, planner, Uberman notes, features
-   ========================== */
-
-/* --------------------------
-   Root Colors & Fonts
---------------------------- */
-:root {
-  --bg: #080c11;
-  --panel: #0e141b;
-  --text: #e6eef6;
-  --accent: #ff7a3d;
-  --muted: #9ba6ad;
-  --mono: ui-monospace, Menlo, Monaco, "Roboto Mono", monospace;
-}
-
-/* --------------------------
-   Global Reset / Base
---------------------------- */
-* { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; height: 100%; }
 body {
-  font-family: "Inter", system-ui, sans-serif;
-  background: radial-gradient(circle at 20% 30%, #0b1118, #06090d);
-  color: var(--text);
-  line-height: 1.6;
-  letter-spacing: 0.01em;
-  padding: 28px;
-}
-
-/* --------------------------
-   Headings & Text
---------------------------- */
-h1, h2, h3, h4, h5 {
-  color: var(--accent);
-  letter-spacing: 0.05em;
-  margin: 0.6em 0 0.3em;
+  background-color: #000;
+  color: #b00000;
+  font-family: 'Courier New', monospace;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
 }
 
 h1 {
-  font-size: 2rem;
-  text-align: center;
-  text-shadow: 0 0 8px var(--accent);
+  text-shadow: 0 0 8px #b00000;
   animation: flicker 2s infinite alternate;
 }
 
-h2 { font-size: 1.2rem; text-transform: uppercase; }
-h3 { font-size: 1rem; }
-
-p, li, td, th {
-  color: var(--text);
-}
-
-em { color: #ff9b63; font-style: normal; }
-.note, .muted { color: var(--muted); font-size: 0.9rem; }
-
-/* --------------------------
-   Flicker Animation
---------------------------- */
 @keyframes flicker {
-  0%,18%,22%,25%,53%,57%,100% { opacity: 1; text-shadow: 0 0 8px var(--accent), 0 0 20px var(--accent); }
-  20%,24%,55% { opacity: 0.7; text-shadow: none; }
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 8px #b00000, 0 0 20px #b00000;
+  }
+  20%, 24%, 55% {
+    opacity: 0.7;
+    text-shadow: none;
+  }
 }
-
-/* --------------------------
-   Container
---------------------------- */
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* --------------------------
-   Navigation Buttons
---------------------------- */
-.nav-buttons {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin: 20px 0;
-}
-
-.nav-btn {
-  display: inline-block;
-  background: var(--accent);
-  color: #101318;
-  padding: 10px 18px;
-  border-radius: 999px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: 0.2s;
-}
-
-.nav-btn:hover {
-  background: #ff9b63;
-  color: #fff;
-  transform: scale(1.05);
-}
-
-/* --------------------------
-   Panels & Field Notes
---------------------------- */
-.page .panel, #admin {
-  background: var(--panel);
-  border: 1px solid rgba(255,255,255,0.05);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.4);
-  margin-bottom: 24px;
-}
-
-.intro { color: var(--muted); font-size: 1.05rem; margin-bottom: 16px; }
-.status {
-  background: var(--accent);
-  color: #101318;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-/* --------------------------
-   Footer
---------------------------- */
-.footer {
-  text-align: center;
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-top: 24px;
-}
-
-/* --------------------------
-   Tables (Planner)
---------------------------- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 12px;
-}
-
-th, td {
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  padding: 6px 8px;
-  text-align: left;
-}
-
-thead th { color: var(--muted); }
-
-/* --------------------------
-   Forms & Inputs (Features)
---------------------------- */
-input, textarea, select {
-  background: #121921;
-  border: 1px solid rgba(255,255,255,0.08);
-  color: var(--text);
-  padding: 8px;
-  border-radius: 6px;
-  font-family: var(--mono);
-  width: 100%;
-  margin-bottom: 8px;
-}
-
-button {
-  background: var(--accent);
-  border: none;
-  color: #101318;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-button:hover {
-  background: #ff9b63;
-  color: #fff;
-  transform: scale(1.05);
-}
-
-textarea { resize: vertical; min-height: 80px; }
-
-/* --------------------------
-   Admin Lights & News Ticker
---------------------------- */
-#admin-lights, #news-ticker {
-  padding: 10px 14px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-#admin-lights { background: #101318; color: #0f0; }
-#news-ticker { background: #121921; color: var(--accent); }
-
-/* --------------------------
-   Suggestions Box List
---------------------------- */
-#suggestion-list { list-style: disc; padding-left: 20px; margin-top: 8px; }
-#suggestion-list li { margin-bottom: 4px; }
-
-/* --------------------------
-   Misc Utility
---------------------------- */
-a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
