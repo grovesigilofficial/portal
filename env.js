@@ -1,8 +1,4 @@
-// =====================================
-// GroveSigilOfficial Environment Config
-// =====================================
 window.__env = {
-  // ⚠️ Temporary placeholders for local testing
-  SUPABASE_URL: "YOUR_SUPABASE_URL_HERE",
-  SUPABASE_ANON_KEY: "YOUR_SUPABASE_PUBLIC_ANON_KEY_HERE"
+  SUPABASE_URL: "https://npvujaioewprtutbkvjh.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wdnVqYWlvZXdwcnR1dGJrdmpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjEyNTE4ODQsImV4cCI6MjA3NjgyNzg4NH0.XnJcerVpDHsqmJ5Piblmj5ta5QoYdWv0DeKflB4SOOk"
 };
